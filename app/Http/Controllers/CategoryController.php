@@ -31,7 +31,20 @@ class CategoryController extends ApiController
      */
     public function store(Request $request)
     {
-        //
+
+        if($this->categoryExists($request)){  //does category exists
+          return $this->respondWithResourceExists('Category');
+        }else if(! $this->requestHasCorrectFormat($request)){ //does request have the correct format
+          return $this->respondWithInvalidFormat();
+        }else{
+          $new_category = $this->newCategory($request);
+          if( $new_category ){  //did it save to db
+            $apiFormatedCategory = new CategoryResource($new_category);
+            return $this->respondWithResourceCreated($apiFormatedCategory, 'Category');
+          }else{
+            return $this->respondWithInternalError('Category Not saved');
+          }
+        }
     }
 
     /**
@@ -66,5 +79,17 @@ class CategoryController extends ApiController
     public function destroy($id)
     {
         //
+    }
+
+    private function newCategory(Request $request){
+      return Category::create(['name' => $request['name']]);
+    }
+
+    private function categoryExists(Request $request){
+      return Category::where('name', $request['name'])->first();
+    }
+
+    private function requestHasCorrectFormat($request){
+      return ($request['name']);
     }
 }

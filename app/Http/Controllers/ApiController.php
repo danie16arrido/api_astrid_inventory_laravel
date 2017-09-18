@@ -68,7 +68,7 @@ class ApiController extends Controller {
    * @param  [string] $message [description]
    * @return [Json Object]          [description]
    */
-  public function respondResourceExists($message){
+  public function respondWithResourceExists($message){
     $resourceExistsMessage = ' exists.';
     return $this->setStatusCode(422)->respondWithError($message . $resourceExistsMessage);
   }
