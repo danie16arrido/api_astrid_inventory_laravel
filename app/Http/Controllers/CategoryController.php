@@ -55,7 +55,17 @@ class CategoryController extends ApiController
      */
     public function show($id)
     {
-        //
+      if(is_numeric($id)){
+        $category = Category::find($id);
+        if ( $category ){    //does resource exists
+          $formatedCategory =  new CategoryResource($category);
+          return $this->respond($formatedCategory, 'Category loaded.');
+        }else{
+          return $this->respondWithResourceNotFound('Category');
+        }
+      }else{
+        return $this->respondWithIdNotNumeric();
+      }
     }
 
     /**
