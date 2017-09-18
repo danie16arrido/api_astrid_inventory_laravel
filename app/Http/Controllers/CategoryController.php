@@ -111,7 +111,21 @@ class CategoryController extends ApiController
      */
     public function destroy($id)
     {
-        //
+      if(is_numeric($id)){
+        $category = Category::find($id);
+        if($category){
+          if($category->delete()){
+            $formatedCategory =  new CategoryResource($category);
+            return $this->respond($formatedCategory, 'Category deleted.');
+          }else{
+            return $this->respondWithInternalError('Category not updated');
+          }
+        }else{
+          return $this->respondWithResourceNotFound('Category');
+        }
+      }else{
+        return $this->respondWithIdNotNumeric();
+      }
     }
 
     private function newCategory(Request $request){
