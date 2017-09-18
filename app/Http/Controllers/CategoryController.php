@@ -77,7 +77,30 @@ class CategoryController extends ApiController
      */
     public function update(Request $request, $id)
     {
-        //
+      if(is_numeric($id)){
+        if($this->requestHasCorrectFormat($request)){
+          $category = Category::find($id);
+          if($category){
+            if($this->categoryExists($request)){
+              return $this->respondWithResourceExists('Category');
+            }else{
+              $category->name = $request['name'];
+              if( $category->save()){
+                $formatedCategory =  new CategoryResource($category);
+                return $this->respondAccepted($formatedCategory, 'Category Updated.');
+              }else{
+                return $this->respondWithInternalError('Category Not Updated');
+              }
+            }
+          }else{
+            return $this->respondWithResourceNotFound('Category');
+          }
+        }else{
+          return $this->respondWithInvalidFormat();
+        }
+      }else{
+        return $this->respondWithIdNotNumeric();
+      }
     }
 
     /**
