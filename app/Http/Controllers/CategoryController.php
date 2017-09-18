@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Category;
+use App\Http\Resources\Category as CategoryResource;
 
-class CategoryController extends Controller
+class CategoryController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +15,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        
+      $categories = Category::all();
+      $apiFormatedCategories = $categories->transform(function($category)
+          {
+            return new CategoryResource($category);
+          });
+      return $this->respond($categories, 'Categories loaded');
     }
 
     /**
